@@ -61,6 +61,11 @@ function createNote(title, body) {
   });
 }
 
+// DELETE: remove a note by its id.
+function deleteNoteRequest(id) {
+  return request(`${API_URL}/${id}`, { method: "DELETE" });
+}
+
 // ===================== 4. Status message and busy state =====================
 // type is "", "loading", "success" or "error" (each has its own colour in CSS)
 function setStatus(message, type = "") {
@@ -72,6 +77,9 @@ function setStatus(message, type = "") {
 function setBusy(isBusy) {
   loadBtn.disabled = isBusy;
   submitBtn.disabled = isBusy;
+  list.querySelectorAll(".delete-btn").forEach((button) => {
+    button.disabled = isBusy;
+  });
 }
 
 // ===================== 5. Draw the notes =====================
@@ -105,6 +113,14 @@ function render() {
     text.appendChild(title);
     text.appendChild(body);
     li.appendChild(text);
+
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "delete-btn";
+    del.textContent = "Delete";
+    del.dataset.id = note.id;
+    del.setAttribute("aria-label", `Delete note: ${note.title}`);
+    li.appendChild(del);
 
     list.appendChild(li);
   });
@@ -179,6 +195,31 @@ async function addNote(title, body) {
   }
 }
 
+// Delete a note (DELETE).
+// JSONPlaceholder does not really store notes, so a note we created earlier
+// never existed on the server. Its DELETE still gets an "OK" answer, because
+// the practice server accepts any id. We therefore treat any successful answer
+// as "deleted" and remove the note from our own list. With a real API, this
+// same code would only remove the note after the server confirmed it.
+async function removeNote(id, button) {
+  setStatus("Deleting note...", "loading");
+  setBusy(true);
+  button.textContent = "Deleting...";
+
+  try {
+    await deleteNoteRequest(id);
+    notes = notes.filter((note) => note.id !== id);
+    render();
+    setStatus(notes.length === 0 ? "Note deleted. No notes are left." : "Note deleted.", "success");
+  } catch (error) {
+    button.textContent = "Delete";
+    setStatus("Could not delete the note. Please try again.", "error");
+    console.error("Delete failed:", error.message);
+  } finally {
+    setBusy(false);
+  }
+}
+
 // ===================== 7. Events =====================
 loadBtn.addEventListener("click", loadNotes);
 
@@ -200,6 +241,14 @@ form.addEventListener("submit", async (event) => {
     form.reset();
   }
   titleInput.focus();
+});
+
+// One listener on the list handles every Delete button (event delegation).
+list.addEventListener("click", (event) => {
+  const button = event.target.closest(".delete-btn");
+  if (button) {
+    removeNote(Number(button.dataset.id), button);
+  }
 });
 
 // ===================== 8. Start =====================
