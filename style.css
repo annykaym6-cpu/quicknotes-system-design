@@ -1,0 +1,203 @@
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f4f6f8;
+  color: #222;
+  line-height: 1.5;
+}
+
+/* ---------- Header and footer ---------- */
+header {
+  background-color: #8e0000;
+  color: #fff;
+  text-align: center;
+  padding: 24px 16px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+header p {
+  margin: 4px 0 0;
+}
+
+footer {
+  text-align: center;
+  color: #777;
+  padding: 16px;
+}
+
+/* ---------- Layout ---------- */
+main {
+  max-width: 760px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+  margin: 0 0 12px;
+  color: #8e0000;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---------- Form ---------- */
+form p {
+  margin: 0 0 14px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+input,
+textarea {
+  width: 100%;
+  font: inherit;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid #0ba184;
+  border-color: #0ba184;
+}
+
+/* ---------- Buttons ---------- */
+button {
+  background-color: #0ba184;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #088a70;
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background-color: #555;
+}
+
+button.secondary:hover:not(:disabled) {
+  background-color: #333;
+}
+
+.delete-btn {
+  background-color: #c0392b;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background-color: #962d22;
+}
+
+/* ---------- Status message ---------- */
+#status {
+  min-height: 1.5em;
+  margin: 0 0 12px;
+  color: #555;
+}
+
+#status.loading {
+  color: #8a5a00;
+}
+
+#status.error {
+  color: #b00020;
+  font-weight: bold;
+}
+
+#status.success {
+  color: #0a7a4b;
+}
+
+/* ---------- Notes list ---------- */
+#notes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.note {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #fffbe6;
+  border-left: 4px solid #0ba184;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+
+.note-title {
+  display: block;
+  margin-bottom: 2px;
+  text-transform: capitalize;
+}
+
+.note-body {
+  margin: 0;
+  color: #444;
+}
+
+.empty {
+  color: #777;
+  font-style: italic;
+  padding: 12px 0;
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 1.6rem;
+  }
+
+  .note {
+    flex-direction: column;
+  }
+
+  .delete-btn {
+    align-self: flex-end;
+  }
+}

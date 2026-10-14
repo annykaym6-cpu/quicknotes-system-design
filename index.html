@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickNotes System Design</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="api.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>QuickNotes</h1>
+      <p>Notes loaded from, added to and deleted from a REST API.</p>
+    </header>
+
+    <main>
+      <section aria-labelledby="add-heading">
+        <h2 id="add-heading">Add a note</h2>
+        <form id="note-form" novalidate>
+          <p>
+            <label for="title-input">Title (required, max 100 characters)</label>
+            <input type="text" id="title-input" placeholder="Note title" />
+          </p>
+          <p>
+            <label for="body-input">Note (optional)</label>
+            <textarea
+              id="body-input"
+              rows="3"
+              placeholder="Write your note..."
+            ></textarea>
+          </p>
+          <button type="submit" id="submit-btn">Add note</button>
+        </form>
+      </section>
+
+      <section aria-labelledby="list-heading">
+        <div class="list-header">
+          <h2 id="list-heading">Your notes</h2>
+          <button type="button" id="load-btn">Load notes</button>
+        </div>
+        <p id="status" role="status" aria-live="polite"></p>
+        <ul id="notes-list"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>QuickNotes System Design project. Data comes from JSONPlaceholder.</p>
+    </footer>
+  </body>
+</html>
