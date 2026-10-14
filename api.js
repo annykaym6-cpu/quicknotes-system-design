@@ -9,10 +9,15 @@
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const NOTES_LIMIT = 10;
 const REQUEST_TIMEOUT_MS = 8000;
+const MAX_TITLE_LENGTH = 100;
 
 const loadBtn = document.querySelector("#load-btn");
 const statusText = document.querySelector("#status");
 const list = document.querySelector("#notes-list");
+const form = document.querySelector("#note-form");
+const titleInput = document.querySelector("#title-input");
+const bodyInput = document.querySelector("#body-input");
+const submitBtn = document.querySelector("#submit-btn");
 
 // The notes currently shown on the page (the page is drawn from this array).
 let notes = [];
@@ -47,6 +52,15 @@ function getNotes() {
   return request(`${API_URL}?_limit=${NOTES_LIMIT}`);
 }
 
+// POST: create a note. The server replies with the new note and its id.
+function createNote(title, body) {
+  return request(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json; charset=UTF-8" },
+    body: JSON.stringify({ title: title, body: body, userId: 1 }),
+  });
+}
+
 // ===================== 4. Status message and busy state =====================
 // type is "", "loading", "success" or "error" (each has its own colour in CSS)
 function setStatus(message, type = "") {
@@ -57,6 +71,7 @@ function setStatus(message, type = "") {
 // Disables the buttons while a request is running, so nothing is sent twice.
 function setBusy(isBusy) {
   loadBtn.disabled = isBusy;
+  submitBtn.disabled = isBusy;
 }
 
 // ===================== 5. Draw the notes =====================
@@ -123,8 +138,69 @@ async function loadNotes() {
   }
 }
 
+// Check the form. Returns an error message, or "" when the input is fine.
+function validateTitle(title) {
+  if (title === "") {
+    return "Please enter a title.";
+  }
+  if (title.length > MAX_TITLE_LENGTH) {
+    return `The title must be ${MAX_TITLE_LENGTH} characters or fewer (it has ${title.length}).`;
+  }
+  return "";
+}
+
+// Create a note (POST).
+// JSONPlaceholder does not really store what we send: it just answers with the
+// new note and the id 101. So we add the returned note to our own list.
+// Every new note would come back with id 101, so we make the id unique here.
+async function addNote(title, body) {
+  setStatus("Saving note...", "loading");
+  setBusy(true);
+
+  try {
+    const result = await createNote(title, body);
+    const created = result.data;
+
+    let localId = Number(created.id);
+    while (notes.some((note) => note.id === localId)) {
+      localId += 1;
+    }
+
+    notes.unshift({ id: localId, title: created.title, body: created.body });
+    render();
+    setStatus(`Note created (status ${result.status}, id ${created.id}).`, "success");
+    return true;
+  } catch (error) {
+    setStatus("Could not add your note. Your text is still in the form, so please try again.", "error");
+    console.error("Create failed:", error.message);
+    return false;
+  } finally {
+    setBusy(false);
+  }
+}
+
 // ===================== 7. Events =====================
 loadBtn.addEventListener("click", loadNotes);
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const title = titleInput.value.trim();
+  const body = bodyInput.value.trim();
+
+  const problem = validateTitle(title);
+  if (problem !== "") {
+    setStatus(problem, "error");
+    titleInput.focus();
+    return;
+  }
+
+  const added = await addNote(title, body);
+  if (added) {
+    form.reset();
+  }
+  titleInput.focus();
+});
 
 // ===================== 8. Start =====================
 setStatus('Click "Load notes" to get your notes from the server.');
